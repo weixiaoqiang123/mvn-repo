@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.wxq</groupId>
+    <artifactId>model-tree</artifactId>
+    <version>1.0.4</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <github.global.server>github</github.global.server>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.5.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>2.0.4</version>
+        </dependency>
+    </dependencies>
+    
+    <distributionManagement>
+        <repository>
+            <id>gitee-releases</id>
+            <name>Gitee Releases Repository</name>
+            <url>file://${project.basedir}/repo</url>
+            <layout>default</layout>
+        </repository>
+    </distributionManagement>
+    
+    <build>
+        <plugins>
+            <!-- 将当前版本生成的 JAR 放到 /repo 目录 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.2</version>
+                <configuration>
+                    <outputDirectory>${project.basedir}/repo</outputDirectory>
+                </configuration>
+            </plugin>
+    
+            <!-- 使用 Maven Deploy 插件上传文件到 Gitee -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.0.0-M1</version>
+                <executions>
+                    <execution>
+                        <id>deploy-file</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/repo/${project.groupId}/${project.artifactId}/${project.version}/${build.finalName}.jar</file>
+                            <url>https://gitee.com/coderweq/mvn-repo/raw/master</url>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--源码-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--github上传插件,用于修改后的发布,执行 mvn clean deploy 自动打包上传到github-->
+            <!--<plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.12</version>
+                <configuration>
+                    <message>Creating site for ${project.artifactId} ${project.version}</message>
+                    <noJekyll>true</noJekyll>
+                    &lt;!&ndash;本地jar地址, 对应上面的altDeploymentRepository&ndash;&gt;
+                    <outputDirectory>${project.build.directory}/repo</outputDirectory>
+                    &lt;!&ndash;分支&ndash;&gt;
+                    <branch>refs/heads/main</branch>
+                    <merge>true</merge>
+
+                    <includes>
+                        <include>**/*</include>
+                    </includes>
+                    &lt;!&ndash;对应github上创建的仓库名称 name&ndash;&gt;
+                    <repositoryName>mvn-repo</repositoryName>
+                    &lt;!&ndash;github登录账号 对应的密码存在maven的setting.xml文件中&ndash;&gt;
+                    &lt;!&ndash;由github组织拥有，则该值将是组织名称，如果由用户拥有，则该值将是用户名&ndash;&gt;
+                    <repositoryOwner>weixiaoqiang123</repositoryOwner>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>-->
+        </plugins>
+    </build>
+
+</project>
