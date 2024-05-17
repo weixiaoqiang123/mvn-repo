@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>com.wxq.mybatis</groupId>
+    <artifactId>mybatis-batch</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    
+    <name>mybatis-batch</name>
+    <description>A mybatis batch processing tool that supports manually controlling transactions and committing batches</description>
+    
+    <developers>
+        <developer>
+            <name>weixiaoqiang</name>
+            <email>weixiaoqiang0717@163.com</email>
+            <url></url>
+        </developer>
+    </developers>
+    
+    <scm>
+        <url>http://github.com/weixiaoqiang123/mybatis-batch</url>
+        <connection>scm:git:ssh://github.com/weixiaoqiang123/mybatis-batch</connection>
+        <developerConnection>scm:git:ssh://git@github.com/weixiaoqiang123/mybatis-batch.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+    <issueManagement>
+        <system>GitHub Issue Management</system>
+        <url>https://github.com/weixiaoqiang123/mybatis-batch/issues</url>
+    </issueManagement>
+    
+    <!--<distributionManagement>-->
+    <!--    <repository>-->
+    <!--        <id>github-ssh</id>-->
+    <!--        <name>Github Snapshots Repository</name>-->
+    <!--        <url>scp://git@github.com/weixiaoqiang123/mvn-repo/main</url>-->
+    <!--    </repository>-->
+    <!--</distributionManagement>-->
+    
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.framework.version>5.3.13</spring.framework.version>
+        <mybatis.version>3.5.16</mybatis.version>
+        <github.global.server>github</github.global.server>
+    </properties>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.framework.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.framework.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>${mybatis.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <plugins>
+            <!-- 执行deploy前清空文件夹 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>clean-target-directory</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- 删除目标文件夹 -->
+                                <delete dir="${project.basedir}/repo"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+    
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <altDeploymentRepository>maven.repo::default::file://${project.basedir}/repo</altDeploymentRepository>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>add-executable-permission</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>chmod</executable>
+                            <arguments>
+                                <argument>+x</argument>
+                                <argument>${project.basedir}/script/deploy.sh</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <!--<execution>
+                        <id>push-packages-to-gitee-repo</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <basedir>${project.basedir}/repo</basedir>
+                            <executable>${project.basedir}/script/deploy.sh</executable>
+                            <arguments>
+                                <argument>&#45;&#45;branch</argument>
+                                <argument>master</argument>
+                                <argument>&#45;&#45;path</argument>
+                                <argument>/repo</argument>
+                                <argument>&#45;&#45;message</argument>
+                                <argument>Release ${project.groupId}:${build.finalName}.${project.packaging}</argument>
+                                <argument>&#45;&#45;url</argument>
+                                <argument>https://gitee.com/coderweq/mvn-repo</argument>
+                                &lt;!&ndash;<argument>https://github.com/weixiaoqiang123/mvn-repo</argument>&ndash;&gt;
+                            </arguments>
+                        </configuration>
+                    </execution>-->
+                    <execution>
+                        <id>push-packages-to-github-repo</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <basedir>${project.basedir}/repo</basedir>
+                            <executable>${project.basedir}/script/deploy.sh</executable>
+                            <arguments>
+                                <argument>--branch</argument>
+                                <argument>main</argument>
+                                <argument>--message</argument>
+                                <argument>Release ${project.groupId}:${build.finalName}.${project.packaging}</argument>
+                                <argument>--url</argument>
+                                <argument>https://github.com/weixiaoqiang123/mvn-repo</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
