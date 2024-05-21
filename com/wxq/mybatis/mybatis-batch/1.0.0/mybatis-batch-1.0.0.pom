@@ -176,9 +176,10 @@
                                 <argument>--message</argument>
                                 <argument>Release ${project.groupId}:${build.finalName}.${project.packaging}</argument>
                                 <argument>--url</argument>
-                                <argument>https://github.com/weixiaoqiang123/mvn-repo</argument>
+                                <!--<argument>https://github.com/weixiaoqiang123/mvn-repo</argument>-->
+                                <argument>git@github.com:weixiaoqiang123/mvn-repo.git</argument>
                                 <argument>--server-id</argument>
-                                <argument>github-https</argument>
+                                <argument>github-ssh</argument>
                             </arguments>
                         </configuration>
                     </execution>
