@@ -114,7 +114,7 @@
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.7</version>
                 <configuration>
-                    <altDeploymentRepository>maven.repo::default::file://${project.basedir}/repo/packages</altDeploymentRepository>
+                    <altDeploymentRepository>maven.repo::default::file://${project.basedir}/repo</altDeploymentRepository>
                 </configuration>
             </plugin>
             
@@ -137,7 +137,7 @@
                             </arguments>
                         </configuration>
                     </execution>
-                    <execution>
+                    <!--<execution>
                         <id>push-packages-to-gitee-repo</id>
                         <phase>deploy</phase>
                         <goals>
@@ -147,17 +147,20 @@
                             <basedir>${project.basedir}/repo</basedir>
                             <executable>${project.basedir}/script/deploy.sh</executable>
                             <arguments>
-                                <argument>--branch</argument>
+                                <argument>&#45;&#45;branch</argument>
                                 <argument>master</argument>
-                                <argument>--path</argument>
+                                <argument>&#45;&#45;path</argument>
                                 <argument>/repo</argument>
-                                <argument>--message</argument>
+                                <argument>&#45;&#45;message</argument>
                                 <argument>Release ${project.groupId}:${build.finalName}.${project.packaging}</argument>
-                                <argument>--url</argument>
+                                <argument>&#45;&#45;url</argument>
                                 <argument>https://gitee.com/coderweq/mvn-repo</argument>
+                                &lt;!&ndash;<argument>git@gitee.com:coderweq/mvn-repo.git</argument>&ndash;&gt;
+                                <argument>&#45;&#45;server-id</argument>
+                                <argument>gitee</argument>
                             </arguments>
                         </configuration>
-                    </execution>
+                    </execution>-->
                     <execution>
                         <id>push-packages-to-github-repo</id>
                         <phase>deploy</phase>
@@ -174,6 +177,8 @@
                                 <argument>Release ${project.groupId}:${build.finalName}.${project.packaging}</argument>
                                 <argument>--url</argument>
                                 <argument>https://github.com/weixiaoqiang123/mvn-repo</argument>
+                                <argument>--server-id</argument>
+                                <argument>github-https</argument>
                             </arguments>
                         </configuration>
                     </execution>
